@@ -1,3 +1,4 @@
+console.log("script.js loaded");
 let allTasks = {};
 
 // Fetch all tasks from the JSON file when the script loads
@@ -9,6 +10,7 @@ fetch('tasks.json')
     .catch(error => console.error('Error loading tasks:', error));
 
 document.getElementById('lookup-btn').addEventListener('click', () => {
+    console.log("Get Tasks button clicked");
     const username = document.getElementById('username').value.trim();
     if (!username) {
         alert('Please enter a username.');
