@@ -2060,6 +2060,15 @@
       "requirements": "N/A",
       "tier": "Easy",
       "points": 10
+    },
+    {
+      "id": 904,
+      "locality": "Global",
+      "task": "Collect 5 unique items for the Medium clue rewards log.",
+      "information": "Collect 5 unique items for the medium clue rewards collection log.",
+      "requirements": "N/A",
+      "tier": "Easy",
+      "points": 10
     }
   ],
   "Medium": [
