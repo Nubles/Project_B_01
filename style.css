@@ -1,0 +1,122 @@
+/* General Alt1 styling */
+body {
+    font-family: 'Trajan Pro', serif, 'Helvetica Neue', sans-serif;
+    background: transparent; /* Alt1 handles the background */
+    color: #ff981f; /* RuneScape orange text color */
+    margin: 0;
+    padding: 10px;
+    font-size: 14px;
+}
+
+.container {
+    background-color: rgba(0, 0, 0, 0.75);
+    border: 2px solid #5a4f3c;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+h1 {
+    text-align: center;
+    color: #ffffff;
+    font-size: 1.5em;
+    margin-top: 0;
+    text-shadow: 1px 1px 2px black;
+}
+
+.input-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#username {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid #3c3c3c;
+    border-radius: 3px;
+    background-color: #1c1c1c;
+    color: #ff981f;
+}
+
+#username::placeholder {
+    color: #a0a0a0;
+}
+
+#lookup-btn {
+    padding: 8px 15px;
+    border: 1px solid #5a4f3c;
+    border-radius: 3px;
+    background-color: #3e3529;
+    color: #ff981f;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: inherit;
+}
+
+#lookup-btn:hover {
+    background-color: #4e4337;
+    border-color: #7a6f5c;
+}
+
+#results {
+    margin-top: 20px;
+}
+
+.task-category {
+    margin-bottom: 20px;
+}
+
+.task-category h2 {
+    color: #ffffff;
+    border-bottom: 1px solid #5a4f3c;
+    padding-bottom: 5px;
+    font-size: 1.2em;
+}
+
+.task {
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 1px solid #444;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.task.completed {
+    background-color: rgba(26, 179, 26, 0.2);
+    border-color: #1ab31a;
+}
+
+.task.completed .task-name {
+    text-decoration: line-through;
+    color: #aaa;
+}
+
+.task-info {
+    flex-grow: 1;
+}
+
+.task-name {
+    font-weight: bold;
+}
+
+.task-description {
+    font-size: 0.9em;
+    color: #b0b0b0;
+    margin-top: 5px;
+}
+
+.task-requirements {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 5px;
+}
+
+.task-points {
+    font-weight: bold;
+    color: #4d94ff;
+    padding-left: 15px;
+    white-space: nowrap;
+}
