@@ -233,6 +233,7 @@ Task ID	Tier	Locality	Task	Information / Requirements	Pts	Comp%
 637	Easy	Wilderness: Daemonheim	Make use of an autoheater, gem bag, herbicide, bonecrusher or charming imp.	Make use of either an autoheater, gem bag, herbicide, bonecrusher or charming imp.	10	55.1%
 638	Easy	Wilderness: General	Enter the chaos tunnels from an entrance in the Wilderness.	Enter the Chaos Tunnels from an entrance in the Wilderness.	10	45.7%
 639	Easy	Wilderness: General	Defeat a Black Unicorn in the Wilderness.	Defeat a black unicorn in the Wilderness.	10	57.1%
+904	Easy	Global	Collect 5 unique items for the Medium clue rewards log.	Collect 5 unique items for the medium clue rewards collection log.	10	35.1%
 468	Medium	Anachronia	Build your Player Lodge on Anachronia.	Build your Player Lodge on Anachronia. (40 Construction)	30	1.5%
 469	Medium	Anachronia	Purchase the herb bag and the herb bag upgrade.	Purchase the herb bag and the herb bag upgrade from the Herby Werby reward shop. (1 Herblore)	30	0.1%
 470	Medium	Anachronia	Give Snoop some clean Dwarf weed.	Give Snoop some clean dwarf weed. (70 Herblore)	30	0.7%
@@ -1153,12 +1154,11 @@ def parse_tasks(raw_text):
                 "locality": locality,
                 "task": task_desc,
                 "information": information,
-                "requirements": "N/A",  # Placeholder, will be extracted from info if present
+                "requirements": "N/A",
                 "tier": tier,
                 "points": points
             }
 
-            # Extract requirements from the information string
             req_match = re.search(r'\((.*?)\)', information)
             if req_match:
                 task_data["requirements"] = req_match.group(1)
@@ -1182,7 +1182,6 @@ if __name__ == "__main__":
     total_tasks = 0
     total_points = 0
     for tier, task_list in parsed_tasks.items():
-        # Using a dictionary to ensure uniqueness by ID
         unique_tasks_dict = {task['id']: task for task in task_list}
         unique_tasks_list = list(unique_tasks_dict.values())
 
