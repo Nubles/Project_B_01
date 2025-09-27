@@ -13,7 +13,52 @@
             <input type="text" id="username" placeholder="Enter your RuneScape Username">
             <button id="lookup-btn">Check Tasks</button>
         </div>
-        <div id="results"></div>
+
+        <div class="tab-container">
+            <button class="tab-button active" onclick="openTab(event, 'all-tasks-tab')">All Tasks</button>
+            <button class="tab-button" onclick="openTab(event, 'pinned-tasks-tab')">Pinned Tasks</button>
+            <button class="tab-button" onclick="openTab(event, 'random-task-tab')">Random Task</button>
+        </div>
+
+        <div id="all-tasks-tab" class="tab-content" style="display:block;">
+            <div class="controls-container">
+                <div class="filter-container">
+                    <input type="text" id="search-bar" placeholder="Search for tasks...">
+                    <select id="tier-filter">
+                        <option value="">All Tiers</option>
+                    </select>
+                    <select id="location-filter">
+                        <option value="">All Locations</option>
+                    </select>
+                    <select id="skill-filter">
+                        <option value="">All Skills</option>
+                    </select>
+                </div>
+                <div class="toggle-container">
+                    <label for="hide-completed-toggle">Hide Completed</label>
+                    <input type="checkbox" id="hide-completed-toggle">
+                </div>
+            </div>
+            <div id="results"></div>
+        </div>
+
+        <div id="pinned-tasks-tab" class="tab-content">
+            <div id="pinned-results"></div>
+        </div>
+
+        <div id="random-task-tab" class="tab-content">
+            <button id="random-task-btn">Get Random Task</button>
+            <div id="random-task-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close-btn">&times;</span>
+                    <div id="random-task-content"></div>
+                    <div id="fireworks-container" style="display: none;">
+                        <p>There's nothing left to do other than go outside and touch grass.</p>
+                        <!-- Fireworks animation will be handled by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
