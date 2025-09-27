@@ -414,18 +414,22 @@ function generateWikiLinks(task) {
     const taskSetMatch = taskString.match(/Complete the task set: (Easy|Medium|Hard|Elite) (.*?)\./i);
     if (taskSetMatch) {
         const tier = taskSetMatch[1].trim();
-        const area = taskSetMatch[2].trim();
+        let area = taskSetMatch[2].trim();
+        // Handle cases like "Fremennik Province" vs "Fremennik"
+        if(area.includes("Fremennik")){
+            area = "Fremennik";
+        }
         const linkName = `${tier} ${area} achievements`;
         links.push({ name: linkName, url: `${baseUrl}${tier}_${area}_achievements` });
     }
 
     // Check for quests
-    const questRegex = /(?:Completion of|Complete the quest:)\s+([a-zA-Z\s'-]+)(?:\(miniquest\))?/gi;
+    const questRegex = /(?:Completion of|Complete the quest:)\s+([a-zA-Z\s'-]+?)(?:\(miniquest\))?([.,]|$)/gi;
     const combinedText = taskString + ' ' + reqString;
     let match;
     while ((match = questRegex.exec(combinedText)) !== null) {
         const questName = match[1].trim().replace(/[.,]$/, '');
-        if (questName.length < 50) { // Avoid overly long matches
+        if (questName.length < 50 && !questName.toLowerCase().includes('achievements')) { // Avoid matching achievement diary again
             links.push({ name: questName, url: `${baseUrl}${questName.replace(/\s+/g, '_')}` });
         }
     }
@@ -441,6 +445,8 @@ function generateWikiLinks(task) {
 
     // Remove duplicate links by URL
     return links.filter((link, index, self) =>
-        index === self.findIndex((l) => l.url === link.url)
+        index === self.findIndex((l) => (
+            l.url === link.url
+        ))
     );
 }

@@ -1,0 +1,16 @@
+{
+  "appName": "Catalyst League Task Checker",
+  "description": "A tool to check your Catalyst League task progress, with features for filtering, pinning, and getting random tasks.",
+  "appUrl": "index.html",
+  "configUrl": "appconfig.json",
+  "iconUrl": "",
+  "defaultWidth": 800,
+  "defaultHeight": 600,
+  "minWidth": 400,
+  "minHeight": 300,
+  "maxWidth": 1200,
+  "maxHeight": 900,
+  "requestHandlers": [],
+  "activators": [],
+  "permissions": "network"
+}

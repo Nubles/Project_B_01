@@ -28,13 +28,17 @@ This is a web-based tool designed to help players track their progress in the Ca
 
 ## How to Install in Alt1
 
-To use this tool within the Alt1 Toolkit, you need to run a simple local web server on your computer. Here’s how to do it using Python:
+To use this tool within the Alt1 Toolkit, you need to run a simple local web server on your computer.
+
+### Step 1: Run a Local Server
+
+You must serve the application files from a local web server for Alt1 to access them.
 
 1.  **Ensure you have Python:** Most systems have Python pre-installed. You can check by opening a command prompt (or Terminal on Mac) and typing `python --version`. If it's not installed, download it from [python.org](https://python.org).
 
 2.  **Navigate to the App Directory:**
     *   Open a command prompt or terminal.
-    *   Use the `cd` command to navigate to the folder where you have saved the app files (`index.html`, `script.js`, `style.css`, `tasks.json`). For example:
+    *   Use the `cd` command to navigate to the folder where you have saved the app files (`index.html`, `appconfig.json`, etc.). For example:
         ```bash
         cd C:\path\to\your\app\folder
         ```
@@ -44,16 +48,22 @@ To use this tool within the Alt1 Toolkit, you need to run a simple local web ser
         ```bash
         python -m http.server
         ```
-    *   You should see a message like `Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...`. This means your local server is running. Keep this command prompt window open.
+    *   You should see a message like `Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...`. This means your local server is running. **Keep this command prompt window open while you are using the app.**
 
-4.  **Add the App to Alt1:**
+### Step 2: Add the App to Alt1
+
+1.  **Copy the Alt1 Install URL:** Copy the following URL. This is a special command that tells Alt1 to add a new application.
+    ```
+    alt1://addapp/http://localhost:8000/appconfig.json
+    ```
+
+2.  **Paste and Go in Alt1:**
     *   Open the Alt1 Toolkit.
-    *   In the Alt1 menu, click on "Add App".
-    *   In the "App URL" field, enter the following address:
-        ```
-        http://localhost:8000
-        ```
-    *   Give the app a name, like "Catalyst Task Checker".
-    *   Click "OK" to save the app.
+    *   Press `Alt` + `1` to open the Alt1 browser.
+    *   Paste the copied URL into the address bar of the Alt1 browser and press Enter.
 
-The app should now appear in your list of Alt1 applications and is ready to use! Just click on it to open it within Alt1.
+3.  **Confirm Installation:**
+    *   Alt1 will show you the app's information from the `appconfig.json` file.
+    *   Click the "Add" or "Install" button to confirm.
+
+The app will now be added to your Alt1 application list and is ready to use.
