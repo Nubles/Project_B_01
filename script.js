@@ -26,7 +26,7 @@ fetch('tasks.json')
     .then(data => {
         allTasks = data;
         populateFilters();
-        document.getElementById('random-task-btn').disabled = false;
+        // The button will be enabled after player data is loaded.
     })
     .catch(error => console.error('Error loading tasks:', error));
 
@@ -60,6 +60,7 @@ document.getElementById('lookup-btn').addEventListener('click', () => {
                  throw new Error(data.error);
             }
             playerData = data;
+            document.getElementById('random-task-btn').disabled = false;
             displayResults();
             displayPinnedTasks();
         })
@@ -171,7 +172,6 @@ function displayResults() {
             const categoryTitle = document.createElement('h2');
             categoryTitle.textContent = `${tier} Tasks (${category.points} / ${category.totalPoints} Points)`;
 
-
             const allTierTasks = [...category.completed, ...category.incomplete].sort((a, b) => a.id - b.id);
 
             const filteredTasks = allTierTasks.filter(task => {
@@ -246,17 +246,23 @@ function createTaskElement(task, completedTaskIds) {
         taskActions.appendChild(pinIcon);
     }
 
-    const wikiLink = generateWikiLink(task);
-    if(wikiLink) {
-        const linkDiv = document.createElement('div');
-        linkDiv.className = 'task-link';
-        linkDiv.innerHTML = `<a href="${wikiLink}" target="_blank" onclick="event.stopPropagation()">Wiki</a>`;
-        taskActions.appendChild(linkDiv);
-    }
-
     taskHeader.appendChild(taskMainInfo);
     taskHeader.appendChild(taskActions);
     taskDiv.appendChild(taskHeader);
+
+    const linksContainer = document.createElement('div');
+    linksContainer.className = 'task-links-container';
+    const wikiLinks = generateWikiLinks(task);
+    if(wikiLinks.length > 0) {
+        wikiLinks.forEach(link => {
+            const linkDiv = document.createElement('div');
+            linkDiv.className = 'task-link';
+            linkDiv.innerHTML = `<a href="${link.url}" target="_blank" onclick="event.stopPropagation()">${link.name}</a>`;
+            linksContainer.appendChild(linkDiv);
+        });
+        taskDiv.appendChild(linksContainer);
+    }
+
     return taskDiv;
 }
 
@@ -397,26 +403,42 @@ function createFireworks() {
     }
 }
 
-function generateWikiLink(task) {
+function generateWikiLinks(task) {
     const baseUrl = 'https://runescape.wiki/w/';
-    let searchTerm = '';
+    const links = [];
+    const reqString = task.requirements || '';
+    const taskString = task.task || '';
 
-    const questMatch = task.task.match(/Complete the quest: (.*?)(?:\(miniquest\))?\./) || task.requirements.match(/Completion of (.*?)(?:\(quest\))?$/i);
-    if (questMatch && questMatch[1]) {
-        searchTerm = questMatch[1].trim().replace(/ \(miniquest\)/i, '').replace(/\s+/g, '_');
-        return `${baseUrl}${searchTerm}`;
+    // Check for quests
+    const questRegex = /(?:Completion of|Complete the quest:)\s+(.*?)(?:\(miniquest\))?([.,]|$)/gi;
+    let match;
+
+    while ((match = questRegex.exec(taskString)) !== null) {
+        const questName = match[1].trim();
+        links.push({ name: questName, url: `${baseUrl}${questName.replace(/\s+/g, '_')}` });
+    }
+    while ((match = questRegex.exec(reqString)) !== null) {
+        const questName = match[1].trim();
+        links.push({ name: questName, url: `${baseUrl}${questName.replace(/\s+/g, '_')}` });
     }
 
-    const skillMatch = task.requirements.match(/(\d+)\s+([a-zA-Z]+)/);
-    if (skillMatch && skillMatch[2]) {
-        searchTerm = skillMatch[2].trim();
-        return `${baseUrl}${searchTerm}`;
+    // Check for skills
+    const skillRegex = /(\d+)\s+([a-zA-Z]+)/g;
+    while ((match = skillRegex.exec(reqString)) !== null) {
+        const skillName = match[2].trim();
+        // Avoid adding generic words
+        if (allSkills.has(skillName)) {
+            links.push({ name: `${match[1]} ${skillName}`, url: `${baseUrl}${skillName}` });
+        }
     }
 
-    if (task.task.toLowerCase().includes("quest")) {
-        searchTerm = task.task.replace(/Complete the quest: /i, '').replace(/\./, '').trim().replace(/\s+/g, '_');
-        return `${baseUrl}${searchTerm}`;
-    }
-
-    return null;
+    // Remove duplicate links by URL
+    return links.filter((link, index, self) =>
+        index === self.findIndex((l) => (
+            l.url === link.url
+        ))
+    );
 }
+
+// Helper set of all possible skills to avoid false positives
+const allSkills = new Set(["Agility", "Archaeology", "Attack", "Construction", "Cooking", "Crafting", "Defence", "Divination", "Dungeoneering", "Farming", "Firemaking", "Fishing", "Fletching", "Herblore", "Constitution", "Hunter", "Invention", "Magic", "Mining", "Necromancy", "Prayer", "Ranged", "Runecrafting", "Slayer", "Smithing", "Strength", "Summoning", "Thieving", "Woodcutting"]);

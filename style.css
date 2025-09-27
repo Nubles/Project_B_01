@@ -80,8 +80,7 @@ h1 {
     border-radius: 4px;
     margin-bottom: 8px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
 }
 
 .task.completed {
@@ -243,27 +242,32 @@ h1 {
 .task-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     width: 100%;
 }
 
 .task-main-info {
     flex-grow: 1;
+    padding-right: 10px;
 }
 
 .task-actions {
     display: flex;
     align-items: center;
+    flex-shrink: 0;
 }
 
-.task-link {
-    margin-left: 15px;
-    font-size: 0.9em;
+.task-links-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
 }
 
 .task-link a {
     color: #4d94ff;
     text-decoration: none;
+    font-size: 0.9em;
 }
 
 .task-link a:hover {
