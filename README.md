@@ -26,43 +26,31 @@ This is a web-based tool designed to help players track their progress in the Ca
 *   **Wiki Integration:**
     *   Tasks with specific quest, skill, or achievement diary requirements will have automatically generated links to the relevant RuneScape Wiki page, making it easy to find guides and information.
 
-## How to Install in Alt1
+## How to Install in Alt1 (No Server Required)
 
-To use this tool within the Alt1 Toolkit, you need to run a simple local web server on your computer.
+This application is fully self-contained and does not require you to run a local server.
 
-### Step 1: Run a Local Server
+1.  **Download the App Files:**
+    *   Download all the application files (`index.html`, `style.css`, `script.js`, `appconfig.json`, and `tasks.json`) into a single folder on your computer.
 
-You must serve the application files from a local web server for Alt1 to access them.
+2.  **Get the File Path:**
+    *   Navigate to the folder where you saved the files.
+    *   In the address bar of your file explorer, copy the full path to the folder. For example: `C:\Users\YourName\Documents\Alt1Apps\TaskChecker`
 
-1.  **Ensure you have Python:** Most systems have Python pre-installed. You can check by opening a command prompt (or Terminal on Mac) and typing `python --version`. If it's not installed, download it from [python.org](https://python.org).
-
-2.  **Navigate to the App Directory:**
-    *   Open a command prompt or terminal.
-    *   Use the `cd` command to navigate to the folder where you have saved the app files (`index.html`, `appconfig.json`, etc.). For example:
-        ```bash
-        cd C:\path\to\your\app\folder
+3.  **Construct the Alt1 URL:**
+    *   Take the file path you copied and add `\appconfig.json` to the end of it.
+    *   It should look something like this: `C:\Users\YourName\Documents\Alt1Apps\TaskChecker\appconfig.json`
+    *   Now, create the final `alt1://` URL by adding `alt1://addapp/` to the beginning of the file path:
+        ```
+        alt1://addapp/C:\Users\YourName\Documents\Alt1Apps\TaskChecker\appconfig.json
         ```
 
-3.  **Start the Local Server:**
-    *   In the command prompt, run the following command:
-        ```bash
-        python -m http.server
-        ```
-    *   You should see a message like `Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...`. This means your local server is running. **Keep this command prompt window open while you are using the app.**
-
-### Step 2: Add the App to Alt1
-
-1.  **Copy the Alt1 Install URL:** Copy the following URL. This is a special command that tells Alt1 to add a new application.
-    ```
-    alt1://addapp/http://localhost:8000/appconfig.json
-    ```
-
-2.  **Paste and Go in Alt1:**
+4.  **Add the App to Alt1:**
     *   Open the Alt1 Toolkit.
     *   Press `Alt` + `1` to open the Alt1 browser.
-    *   Paste the copied URL into the address bar of the Alt1 browser and press Enter.
+    *   Paste the complete `alt1://addapp/...` URL into the address bar of the Alt1 browser and press Enter.
 
-3.  **Confirm Installation:**
+5.  **Confirm Installation:**
     *   Alt1 will show you the app's information from the `appconfig.json` file.
     *   Click the "Add" or "Install" button to confirm.
 
