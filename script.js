@@ -26,6 +26,7 @@ fetch('tasks.json')
     .then(data => {
         allTasks = data;
         populateFilters();
+        document.getElementById('random-task-btn').disabled = false;
     })
     .catch(error => console.error('Error loading tasks:', error));
 
@@ -83,7 +84,6 @@ function populateFilters() {
                     const match = req.trim().match(/^\d+\s+([a-zA-Z\s]+)/);
                     if (match && !/completion of/i.test(match[0])) {
                         let skillName = match[1].trim();
-                        // Attempt to normalize skill names if needed, e.g., "Attack level" -> "Attack"
                         skills.add(skillName);
                     }
                 });
@@ -322,6 +322,10 @@ const randomTaskCardContainer = document.getElementById('random-task-card-contai
 const fireworksContainer = document.getElementById('fireworks-container');
 
 randomTaskBtn.addEventListener('click', () => {
+    if (!playerData) {
+        alert('Please check tasks for a user first.');
+        return;
+    }
     const completedTaskIds = playerData ? new Set(playerData.league_tasks) : new Set();
     const incompleteTasks = [];
 

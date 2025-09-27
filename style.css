@@ -201,6 +201,13 @@ h1 {
     background-color: #4e4337;
 }
 
+#random-task-btn:disabled {
+    background-color: #2a231c;
+    color: #a0a0a0;
+    cursor: not-allowed;
+}
+
+
 #random-task-card-container .task {
     margin-top: 15px;
 }
