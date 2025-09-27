@@ -3,7 +3,7 @@ let allTasks = {};
 let playerData = null;
 let pinnedTasks = new Set(JSON.parse(localStorage.getItem('pinnedTasks') || '[]'));
 let tempCompletedTasks = new Set();
-
+const allSkills = new Set(["Agility", "Archaeology", "Attack", "Construction", "Cooking", "Crafting", "Defence", "Divination", "Dungeoneering", "Farming", "Firemaking", "Fishing", "Fletching", "Herblore", "Constitution", "Hunter", "Invention", "Magic", "Mining", "Necromancy", "Prayer", "Ranged", "Runecrafting", "Slayer", "Smithing", "Strength", "Summoning", "Thieving", "Woodcutting"]);
 
 // Tab switching
 function openTab(evt, tabName) {
@@ -26,7 +26,6 @@ fetch('tasks.json')
     .then(data => {
         allTasks = data;
         populateFilters();
-        // The button will be enabled after player data is loaded.
     })
     .catch(error => console.error('Error loading tasks:', error));
 
@@ -85,7 +84,9 @@ function populateFilters() {
                     const match = req.trim().match(/^\d+\s+([a-zA-Z\s]+)/);
                     if (match && !/completion of/i.test(match[0])) {
                         let skillName = match[1].trim();
-                        skills.add(skillName);
+                        if(allSkills.has(skillName)){
+                            skills.add(skillName);
+                        }
                     }
                 });
             }
@@ -408,25 +409,30 @@ function generateWikiLinks(task) {
     const links = [];
     const reqString = task.requirements || '';
     const taskString = task.task || '';
+    const combinedText = taskString + ' ' + reqString;
+
+    // Check for "task set"
+    const taskSetMatch = combinedText.match(/Complete the task set: (.*?)\./i);
+    if (taskSetMatch) {
+        const setName = taskSetMatch[1].trim() + " achievements";
+        links.push({ name: setName, url: `${baseUrl}${setName.replace(/\s+/g, '_')}` });
+    }
 
     // Check for quests
-    const questRegex = /(?:Completion of|Complete the quest:)\s+(.*?)(?:\(miniquest\))?([.,]|$)/gi;
+    const questRegex = /(?:Completion of|Complete the quest:)\s+([a-zA-Z\s'-]+)(?:\(miniquest\))?/gi;
     let match;
-
-    while ((match = questRegex.exec(taskString)) !== null) {
-        const questName = match[1].trim();
-        links.push({ name: questName, url: `${baseUrl}${questName.replace(/\s+/g, '_')}` });
-    }
-    while ((match = questRegex.exec(reqString)) !== null) {
-        const questName = match[1].trim();
-        links.push({ name: questName, url: `${baseUrl}${questName.replace(/\s+/g, '_')}` });
+    while ((match = questRegex.exec(combinedText)) !== null) {
+        const questName = match[1].trim().replace(/[.,]$/, '');
+         // A simple check to avoid overly long matches
+        if (questName.length < 50) {
+            links.push({ name: questName, url: `${baseUrl}${questName.replace(/\s+/g, '_')}` });
+        }
     }
 
     // Check for skills
     const skillRegex = /(\d+)\s+([a-zA-Z]+)/g;
     while ((match = skillRegex.exec(reqString)) !== null) {
         const skillName = match[2].trim();
-        // Avoid adding generic words
         if (allSkills.has(skillName)) {
             links.push({ name: `${match[1]} ${skillName}`, url: `${baseUrl}${skillName}` });
         }
@@ -439,6 +445,3 @@ function generateWikiLinks(task) {
         ))
     );
 }
-
-// Helper set of all possible skills to avoid false positives
-const allSkills = new Set(["Agility", "Archaeology", "Attack", "Construction", "Cooking", "Crafting", "Defence", "Divination", "Dungeoneering", "Farming", "Firemaking", "Fishing", "Fletching", "Herblore", "Constitution", "Hunter", "Invention", "Magic", "Mining", "Necromancy", "Prayer", "Ranged", "Runecrafting", "Slayer", "Smithing", "Strength", "Summoning", "Thieving", "Woodcutting"]);
