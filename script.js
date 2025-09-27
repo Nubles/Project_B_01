@@ -1,5 +1,9 @@
 console.log("script.js loaded");
 let allTasks = {};
+let playerData = null;
+let pinnedTasks = new Set(JSON.parse(localStorage.getItem('pinnedTasks') || '[]'));
+let tempCompletedTasks = new Set();
+
 
 // Tab switching
 function openTab(evt, tabName) {
@@ -15,9 +19,6 @@ function openTab(evt, tabName) {
     document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += " active";
 }
-
-let playerData = null;
-let pinnedTasks = new Set(JSON.parse(localStorage.getItem('pinnedTasks') || '[]'));
 
 // Fetch all tasks from the JSON file when the script loads
 fetch('tasks.json')
@@ -36,7 +37,6 @@ document.getElementById('lookup-btn').addEventListener('click', () => {
         return;
     }
 
-    // Ensure tasks are loaded before proceeding
     if (Object.keys(allTasks).length === 0) {
         alert('Task list is not loaded yet. Please try again in a moment.');
         return;
@@ -45,6 +45,7 @@ document.getElementById('lookup-btn').addEventListener('click', () => {
     const apiUrl = `https://sync.runescape.wiki/runescape/player/${username}/LEAGUE_1`;
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = 'Loading player data...';
+    tempCompletedTasks.clear(); // Clear temp completed on new lookup
 
     fetch(apiUrl)
         .then(response => {
@@ -59,6 +60,7 @@ document.getElementById('lookup-btn').addEventListener('click', () => {
             }
             playerData = data;
             displayResults();
+            displayPinnedTasks();
         })
         .catch(error => {
             console.error('Error fetching or processing data:', error);
@@ -78,9 +80,11 @@ function populateFilters() {
             if (task.requirements) {
                 const reqs = task.requirements.split(',');
                 reqs.forEach(req => {
-                    const match = req.trim().match(/^\d+\s+([a-zA-Z]+)/);
-                    if (match) {
-                        skills.add(match[1]);
+                    const match = req.trim().match(/^\d+\s+([a-zA-Z\s]+)/);
+                    if (match && !/completion of/i.test(match[0])) {
+                        let skillName = match[1].trim();
+                        // Attempt to normalize skill names if needed, e.g., "Attack level" -> "Attack"
+                        skills.add(skillName);
                     }
                 });
             }
@@ -125,7 +129,7 @@ function processTasks(completedTaskIds) {
 
         allTasks[tier].forEach(task => {
             processed[tier].totalPoints += task.points;
-            if (completedTaskIds.has(task.id)) {
+            if (completedTaskIds.has(task.id) || tempCompletedTasks.has(task.id)) {
                 processed[tier].completed.push(task);
                 processed[tier].points += task.points;
             } else {
@@ -143,7 +147,7 @@ function displayResults() {
     const results = processTasks(completedTaskIds);
 
     const resultsDiv = document.getElementById('results');
-    resultsDiv.innerHTML = ''; // Clear previous results
+    resultsDiv.innerHTML = '';
 
     let totalCompletedPoints = 0;
     let totalPossiblePoints = 0;
@@ -166,12 +170,12 @@ function displayResults() {
 
             const categoryTitle = document.createElement('h2');
             categoryTitle.textContent = `${tier} Tasks (${category.points} / ${category.totalPoints} Points)`;
-            categoryDiv.appendChild(categoryTitle);
+
 
             const allTierTasks = [...category.completed, ...category.incomplete].sort((a, b) => a.id - b.id);
 
             const filteredTasks = allTierTasks.filter(task => {
-                const isCompleted = completedTaskIds.has(task.id);
+                const isCompleted = completedTaskIds.has(task.id) || tempCompletedTasks.has(task.id);
                 if (hideCompleted && isCompleted) return false;
 
                 if (searchTerm && !task.task.toLowerCase().includes(searchTerm)) {
@@ -180,76 +184,82 @@ function displayResults() {
                 if (selectedLocation && task.locality.split(':')[0] !== selectedLocation) {
                     return false;
                 }
-                if (selectedSkill) {
-                    const skillReq = task.requirements && task.requirements.toLowerCase().includes(selectedSkill.toLowerCase());
-                    if (!skillReq) return false;
+                 if (selectedSkill) {
+                    const skillRegex = new RegExp(`\\b${selectedSkill}\\b`, 'i');
+                    if (!skillRegex.test(task.requirements)) return false;
                 }
                 return true;
             });
 
-
-            filteredTasks.forEach(task => {
-                const isCompleted = completedTaskIds.has(task.id);
-                const taskDiv = document.createElement('div');
-                taskDiv.className = isCompleted ? 'task completed' : 'task';
-
-                const taskHeader = document.createElement('div');
-                taskHeader.className = 'task-header';
-
-                const taskMainInfo = document.createElement('div');
-                taskMainInfo.className = 'task-main-info';
-                taskMainInfo.innerHTML = `
-                    <div class="task-name">${task.task}</div>
-                    <div class="task-description">${task.information}</div>
-                    <div class="task-requirements"><em>Requirements: ${task.requirements || 'N/A'}</em></div>
-                `;
-
-                const taskActions = document.createElement('div');
-                taskActions.className = 'task-actions';
-
-                const taskPoints = document.createElement('div');
-                taskPoints.className = 'task-points';
-                taskPoints.textContent = `${task.points} pts`;
-
-                const pinIcon = document.createElement('span');
-                pinIcon.className = 'pin-icon';
-                pinIcon.innerHTML = '&#128204;'; // Pin emoji
-                if (pinnedTasks.has(task.id)) {
-                    pinIcon.classList.add('pinned');
-                }
-                pinIcon.onclick = () => togglePinTask(task.id);
-
-                taskActions.appendChild(taskPoints);
-                if (!isCompleted) {
-                    taskActions.appendChild(pinIcon);
-                }
-
-                const wikiLink = generateWikiLink(task);
-                if(wikiLink) {
-                    const linkDiv = document.createElement('div');
-                    linkDiv.className = 'task-link';
-                    linkDiv.innerHTML = `<a href="${wikiLink}" target="_blank">Wiki</a>`;
-                    taskActions.appendChild(linkDiv);
-                }
-
-                taskHeader.appendChild(taskMainInfo);
-                taskHeader.appendChild(taskActions);
-                taskDiv.appendChild(taskHeader);
-                categoryDiv.appendChild(taskDiv);
-            });
-             if (filteredTasks.length > 0) {
+            if (filteredTasks.length > 0) {
+                categoryDiv.appendChild(categoryTitle);
+                filteredTasks.forEach(task => {
+                    const taskDiv = createTaskElement(task, completedTaskIds);
+                    categoryDiv.appendChild(taskDiv);
+                });
                 resultsDiv.appendChild(categoryDiv);
             }
         }
     });
 
-    // Add a total summary at the top
     const summaryDiv = document.createElement('div');
     summaryDiv.innerHTML = `<h3>Total Points: ${totalCompletedPoints} / ${totalPossiblePoints}</h3><hr>`;
     resultsDiv.prepend(summaryDiv);
-
-    displayPinnedTasks();
 }
+
+function createTaskElement(task, completedTaskIds) {
+    const isCompleted = completedTaskIds.has(task.id) || tempCompletedTasks.has(task.id);
+    const taskDiv = document.createElement('div');
+    taskDiv.className = isCompleted ? 'task completed' : 'task';
+    taskDiv.setAttribute('data-task-id', task.id);
+
+    const taskHeader = document.createElement('div');
+    taskHeader.className = 'task-header';
+
+    const taskMainInfo = document.createElement('div');
+    taskMainInfo.className = 'task-main-info';
+    taskMainInfo.innerHTML = `
+        <div class="task-name">${task.task}</div>
+        <div class="task-description">${task.information}</div>
+        <div class="task-requirements"><em>Requirements: ${task.requirements || 'N/A'}</em></div>
+    `;
+
+    const taskActions = document.createElement('div');
+    taskActions.className = 'task-actions';
+
+    const taskPoints = document.createElement('div');
+    taskPoints.className = 'task-points';
+    taskPoints.textContent = `${task.points} pts`;
+    taskActions.appendChild(taskPoints);
+
+    if (!isCompleted) {
+        const pinIcon = document.createElement('span');
+        pinIcon.className = 'pin-icon';
+        pinIcon.innerHTML = '&#128204;';
+        if (pinnedTasks.has(task.id)) {
+            pinIcon.classList.add('pinned');
+        }
+        pinIcon.onclick = (e) => {
+            e.stopPropagation();
+            togglePinTask(task.id);
+        };
+        taskActions.appendChild(pinIcon);
+    }
+
+    const wikiLink = generateWikiLink(task);
+    if(wikiLink) {
+        const linkDiv = document.createElement('div');
+        linkDiv.className = 'task-link';
+        linkDiv.innerHTML = `<a href="${wikiLink}" target="_blank" onclick="event.stopPropagation()">Wiki</a>`;
+        taskActions.appendChild(linkDiv);
+    }
+
+    taskHeader.appendChild(taskMainInfo);
+    taskHeader.appendChild(taskActions);
+    taskDiv.appendChild(taskHeader);
+    return taskDiv;
+}
+
 
 document.getElementById('hide-completed-toggle').addEventListener('change', displayResults);
 document.getElementById('search-bar').addEventListener('input', displayResults);
@@ -273,13 +283,17 @@ function displayPinnedTasks() {
     pinnedResultsDiv.innerHTML = '';
     const completedTaskIds = playerData ? new Set(playerData.league_tasks) : new Set();
 
-    // Remove completed tasks from pinned list
+    const tasksToRemove = [];
     pinnedTasks.forEach(taskId => {
-        if (completedTaskIds.has(taskId)) {
-            pinnedTasks.delete(taskId);
+        if (completedTaskIds.has(taskId) || tempCompletedTasks.has(taskId)) {
+            tasksToRemove.push(taskId);
         }
     });
-    localStorage.setItem('pinnedTasks', JSON.stringify(Array.from(pinnedTasks)));
+
+    tasksToRemove.forEach(taskId => pinnedTasks.delete(taskId));
+    if (tasksToRemove.length > 0) {
+        localStorage.setItem('pinnedTasks', JSON.stringify(Array.from(pinnedTasks)));
+    }
 
 
     if (pinnedTasks.size === 0) {
@@ -296,51 +310,15 @@ function displayPinnedTasks() {
         });
     }
 
-    tasksToDisplay.forEach(task => {
-        const isCompleted = completedTaskIds.has(task.id);
-        const taskDiv = document.createElement('div');
-        taskDiv.className = isCompleted ? 'task completed' : 'task';
-
-        const taskHeader = document.createElement('div');
-        taskHeader.className = 'task-header';
-
-        const taskMainInfo = document.createElement('div');
-        taskMainInfo.className = 'task-main-info';
-        taskMainInfo.innerHTML = `
-            <div class="task-name">${task.task}</div>
-            <div class="task-description">${task.information}</div>
-            <div class="task-requirements"><em>Requirements: ${task.requirements || 'N/A'}</em></div>
-        `;
-
-        const taskActions = document.createElement('div');
-        taskActions.className = 'task-actions';
-
-        const taskPoints = document.createElement('div');
-        taskPoints.className = 'task-points';
-        taskPoints.textContent = `${task.points} pts`;
-
-        const wikiLink = generateWikiLink(task);
-        if(wikiLink) {
-            const linkDiv = document.createElement('div');
-            linkDiv.className = 'task-link';
-            linkDiv.innerHTML = `<a href="${wikiLink}" target="_blank">Wiki</a>`;
-            taskActions.appendChild(linkDiv);
-        }
-
-        taskActions.appendChild(taskPoints);
-
-        taskHeader.appendChild(taskMainInfo);
-        taskHeader.appendChild(taskActions);
-        taskDiv.appendChild(taskHeader);
+    tasksToDisplay.sort((a,b) => a.id - b.id).forEach(task => {
+        const taskDiv = createTaskElement(task, completedTaskIds);
         pinnedResultsDiv.appendChild(taskDiv);
     });
 }
 
 // Random Task Feature
 const randomTaskBtn = document.getElementById('random-task-btn');
-const modal = document.getElementById('random-task-modal');
-const closeBtn = document.querySelector('.close-btn');
-const randomTaskContent = document.getElementById('random-task-content');
+const randomTaskCardContainer = document.getElementById('random-task-card-container');
 const fireworksContainer = document.getElementById('fireworks-container');
 
 randomTaskBtn.addEventListener('click', () => {
@@ -349,52 +327,69 @@ randomTaskBtn.addEventListener('click', () => {
 
     for (const tier in allTasks) {
         allTasks[tier].forEach(task => {
-            if (!completedTaskIds.has(task.id)) {
+            if (!completedTaskIds.has(task.id) && !tempCompletedTasks.has(task.id)) {
                 incompleteTasks.push(task);
             }
         });
     }
 
+    randomTaskCardContainer.innerHTML = '';
+    fireworksContainer.style.display = 'none';
+
     if (incompleteTasks.length === 0) {
-        randomTaskContent.style.display = 'none';
         fireworksContainer.style.display = 'block';
-        // Simple fireworks effect
         createFireworks();
     } else {
-        fireworksContainer.style.display = 'none';
-        randomTaskContent.style.display = 'block';
         const randomTask = incompleteTasks[Math.floor(Math.random() * incompleteTasks.length)];
-        randomTaskContent.innerHTML = `
-            <h3>${randomTask.task}</h3>
-            <p>${randomTask.information}</p>
-            <p><em>Requirements: ${randomTask.requirements || 'N/A'}</em></p>
-            <p><strong>Points: ${randomTask.points}</strong></p>
-        `;
+        const taskCard = createTaskElement(randomTask, completedTaskIds);
+
+        const actions = document.createElement('div');
+        actions.className = 'random-task-actions';
+
+        const pinBtn = document.createElement('button');
+        pinBtn.textContent = 'Pin it';
+        pinBtn.onclick = () => togglePinTask(randomTask.id);
+
+        const completeBtn = document.createElement('button');
+        completeBtn.textContent = 'Complete it';
+        completeBtn.onclick = () => {
+            tempCompletedTasks.add(randomTask.id);
+            displayResults();
+            displayPinnedTasks();
+            randomTaskCardContainer.innerHTML = ''; // Clear the card
+        };
+
+        actions.appendChild(pinBtn);
+        actions.appendChild(completeBtn);
+        taskCard.appendChild(actions);
+
+        randomTaskCardContainer.appendChild(taskCard);
     }
-
-    modal.style.display = 'block';
 });
 
-closeBtn.addEventListener('click', () => {
-    modal.style.display = 'none';
-});
-
-window.addEventListener('click', (event) => {
-    if (event.target == modal) {
-        modal.style.display = 'none';
-    }
-});
 
 function createFireworks() {
     const container = document.getElementById('fireworks-container');
-    for (let i = 0; i < 30; i++) {
+    if(!container) return;
+    container.innerHTML = '<p>There\'s nothing left to do other than go outside and touch grass.</p>'; // Reset
+    for (let i = 0; i < 50; i++) {
         const firework = document.createElement('div');
         firework.className = 'firework';
-        firework.style.left = Math.random() * 100 + 'vw';
-        firework.style.top = Math.random() * 100 + 'vh';
-        firework.style.animationDuration = (Math.random() * 2 + 1) + 's';
+
+        const x = Math.random() * 100;
+        const y = Math.random() * 100;
+        firework.style.left = x + 'vw';
+        firework.style.top = y + 'vh';
+
+        const size = Math.random() * 5 + 2;
+        firework.style.width = size + 'px';
+        firework.style.height = size + 'px';
+
+        firework.style.animationDuration = (Math.random() * 1 + 0.5) + 's';
+        firework.style.animationDelay = (Math.random() * 1) + 's';
+
         container.appendChild(firework);
-        setTimeout(() => firework.remove(), 3000);
+        setTimeout(() => firework.remove(), 2000);
     }
 }
 
@@ -402,21 +397,18 @@ function generateWikiLink(task) {
     const baseUrl = 'https://runescape.wiki/w/';
     let searchTerm = '';
 
-    // Check for quest requirements first
-    const questMatch = task.task.match(/Complete the quest: (.*?)\./) || task.requirements.match(/Completion of (.*?)(?:\(quest\))?$/);
+    const questMatch = task.task.match(/Complete the quest: (.*?)(?:\(miniquest\))?\./) || task.requirements.match(/Completion of (.*?)(?:\(quest\))?$/i);
     if (questMatch && questMatch[1]) {
-        searchTerm = questMatch[1].trim().replace(/\s+/g, '_');
+        searchTerm = questMatch[1].trim().replace(/ \(miniquest\)/i, '').replace(/\s+/g, '_');
         return `${baseUrl}${searchTerm}`;
     }
 
-    // Check for skill requirements
-    const skillMatch = task.requirements.match(/\d+\s+([a-zA-Z]+)/);
-    if (skillMatch && skillMatch[1]) {
-        searchTerm = skillMatch[1].trim();
+    const skillMatch = task.requirements.match(/(\d+)\s+([a-zA-Z]+)/);
+    if (skillMatch && skillMatch[2]) {
+        searchTerm = skillMatch[2].trim();
         return `${baseUrl}${searchTerm}`;
     }
 
-    // Fallback to task name if it seems like a quest
     if (task.task.toLowerCase().includes("quest")) {
         searchTerm = task.task.replace(/Complete the quest: /i, '').replace(/\./, '').trim().replace(/\s+/g, '_');
         return `${baseUrl}${searchTerm}`;
