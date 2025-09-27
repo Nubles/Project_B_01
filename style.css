@@ -211,8 +211,11 @@ h1 {
     margin-top: 15px;
 }
 
-.random-task-actions button {
+.random-task-actions {
     margin-top: 10px;
+}
+
+.random-task-actions button {
     margin-right: 10px;
     padding: 5px 10px;
     border: 1px solid #5a4f3c;
