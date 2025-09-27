@@ -409,22 +409,23 @@ function generateWikiLinks(task) {
     const links = [];
     const reqString = task.requirements || '';
     const taskString = task.task || '';
-    const combinedText = taskString + ' ' + reqString;
 
-    // Check for "task set"
-    const taskSetMatch = combinedText.match(/Complete the task set: (.*?)\./i);
+    // Check for "task set" specifically
+    const taskSetMatch = taskString.match(/Complete the task set: (Easy|Medium|Hard|Elite) (.*?)\./i);
     if (taskSetMatch) {
-        const setName = taskSetMatch[1].trim() + " achievements";
-        links.push({ name: setName, url: `${baseUrl}${setName.replace(/\s+/g, '_')}` });
+        const tier = taskSetMatch[1].trim();
+        const area = taskSetMatch[2].trim();
+        const linkName = `${tier} ${area} achievements`;
+        links.push({ name: linkName, url: `${baseUrl}${tier}_${area}_achievements` });
     }
 
     // Check for quests
     const questRegex = /(?:Completion of|Complete the quest:)\s+([a-zA-Z\s'-]+)(?:\(miniquest\))?/gi;
+    const combinedText = taskString + ' ' + reqString;
     let match;
     while ((match = questRegex.exec(combinedText)) !== null) {
         const questName = match[1].trim().replace(/[.,]$/, '');
-         // A simple check to avoid overly long matches
-        if (questName.length < 50) {
+        if (questName.length < 50) { // Avoid overly long matches
             links.push({ name: questName, url: `${baseUrl}${questName.replace(/\s+/g, '_')}` });
         }
     }
@@ -440,8 +441,6 @@ function generateWikiLinks(task) {
 
     // Remove duplicate links by URL
     return links.filter((link, index, self) =>
-        index === self.findIndex((l) => (
-            l.url === link.url
-        ))
+        index === self.findIndex((l) => l.url === link.url)
     );
 }
