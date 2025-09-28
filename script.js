@@ -307,12 +307,12 @@ function generateWikiLinks(task) {
         links.push({ name: linkName, url: `${baseUrl}${tier}_${area}_achievements` });
     }
 
-    const questRegex = /(?:Partial completion of|Completion of|Complete the quest:)\s+([a-zA-Z\s,'-]+)/gi;
+    const questRegex = /(?:Completion of|Complete the quest:)\s+([a-zA-Z\s'-]+?)(?:\(miniquest\))?/gi;
     const combinedText = taskString + ' ' + reqString;
     let match;
     while ((match = questRegex.exec(combinedText)) !== null) {
         const questName = match[1].trim().replace(/[.,]$/, '');
-        if (questName.length > 2 && questName.length < 50 && !questName.toLowerCase().includes('achievements') && !questName.toLowerCase().includes('various quests') && !questName.toLowerCase().includes('multiple quests')) {
+        if (questName.length < 50 && !questName.toLowerCase().includes('achievements')) {
             links.push({ name: questName, url: `${baseUrl}${questName.replace(/\s+/g, '_')}` });
         }
     }
