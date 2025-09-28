@@ -297,22 +297,26 @@ function generateWikiLinks(task) {
     const links = [];
     const reqString = task.requirements || '';
     const taskString = task.task || '';
+    const combinedText = taskString + ' ' + reqString;
 
-    const taskSetMatch = taskString.match(/Complete the task set: (Easy|Medium|Hard|Elite) (.*?)\./i);
-    if (taskSetMatch) {
-        const tier = taskSetMatch[1].trim();
-        let area = taskSetMatch[2].trim();
-        if (area.includes("Fremennik")) area = "Fremennik"; // Normalize area name
-        const linkName = `${tier} ${area} achievements`;
-        links.push({ name: linkName, url: `${baseUrl}${tier}_${area}_achievements` });
+    // Task sets
+    const taskSetRegex = /(?:completion of the|complete the task set:?) (easy|medium|hard|elite|master) ([\w\s'-]+?)(?: achievements)?\b/gi;
+    let match;
+    while ((match = taskSetRegex.exec(combinedText)) !== null) {
+        const tier = match[1].trim();
+        let area = match[2].trim();
+        if (area.toLowerCase().includes("fremennik")) area = "Fremennik";
+
+        const linkName = `${tier.charAt(0).toUpperCase() + tier.slice(1)} ${area} achievements`;
+        const urlName = `${tier.charAt(0).toUpperCase() + tier.slice(1)}_${area.replace(/\s+/g, '_')}_achievements`;
+        links.push({ name: linkName, url: `${baseUrl}${urlName}` });
     }
 
-    const questRegex = /(?:Completion of|Complete the quest:)\s+([a-zA-Z\s'-]+?)(?:\(miniquest\))?/gi;
-    const combinedText = taskString + ' ' + reqString;
-    let match;
+    // Quests
+    const questRegex = /(?:completion of|complete the quest:?|partial completion of) ([^.(]+)/gi;
     while ((match = questRegex.exec(combinedText)) !== null) {
-        const questName = match[1].trim().replace(/[.,]$/, '');
-        if (questName.length < 50 && !questName.toLowerCase().includes('achievements')) {
+        const questName = match[1].trim();
+        if (questName && questName.length < 50 && !questName.toLowerCase().includes('achievements') && !questName.toLowerCase().includes('task set')) {
             links.push({ name: questName, url: `${baseUrl}${questName.replace(/\s+/g, '_')}` });
         }
     }
