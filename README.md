@@ -26,32 +26,21 @@ This is a web-based tool designed to help players track their progress in the Ca
 *   **Wiki Integration:**
     *   Tasks with specific quest, skill, or achievement diary requirements will have automatically generated links to the relevant RuneScape Wiki page, making it easy to find guides and information.
 
-## How to Install in Alt1 (No Server Required)
+## How to Install in Alt1
 
-This application is fully self-contained and does not require you to run a local server.
-
-1.  **Download the App Files:**
-    *   Download all the application files (`index.html`, `style.css`, `script.js`, `appconfig.json`, and `tasks.json`) into a single folder on your computer.
-
-2.  **Get the File Path:**
-    *   Navigate to the folder where you saved the files.
-    *   In the address bar of your file explorer, copy the full path to the folder. For example: `C:\Users\YourName\Documents\Alt1Apps\TaskChecker`
-
-3.  **Construct the Alt1 URL:**
-    *   Take the file path you copied and add `\appconfig.json` to the end of it.
-    *   It should look something like this: `C:\Users\YourName\Documents\Alt1Apps\TaskChecker\appconfig.json`
-    *   Now, create the final `alt1://` URL by adding `alt1://addapp/` to the beginning of the file path:
+1.  **Copy the Installation URL:**
+    *   Copy the following URL. This is the direct link to install the app in Alt1:
         ```
-        alt1://addapp/C:\Users\YourName\Documents\Alt1Apps\TaskChecker\appconfig.json
+        alt1://addapp/https://nubles.github.io/Project_B_01/appconfig.json
         ```
 
-4.  **Add the App to Alt1:**
-    *   Open the Alt1 Toolkit.
-    *   Press `Alt` + `1` to open the Alt1 browser.
-    *   Paste the complete `alt1://addapp/...` URL into the address bar of the Alt1 browser and press Enter.
+2.  **Add the App to Alt1:**
+    *   Make sure the Alt1 Toolkit is running.
+    *   Press `Alt` + `1` on your keyboard to open the Alt1 browser.
+    *   Paste the URL you copied into the address bar at the top of the Alt1 browser and press Enter.
 
-5.  **Confirm Installation:**
-    *   Alt1 will show you the app's information from the `appconfig.json` file.
-    *   Click the "Add" or "Install" button to confirm.
+3.  **Confirm Installation:**
+    *   Alt1 will display the app's information.
+    *   Click the "Add App" button to install it.
 
 The app will now be added to your Alt1 application list and is ready to use.
