@@ -1,296 +1,156 @@
-/* General Alt1 styling */
-body {
-    font-family: 'Trajan Pro', serif, 'Helvetica Neue', sans-serif;
-    background: transparent; /* Alt1 handles the background */
-    color: #ff981f; /* RuneScape orange text color */
-    margin: 0;
-    padding: 10px;
-    font-size: 14px;
+.header {
+    font-weight: bold;
 }
 
-.container {
-    background-color: rgba(0, 0, 0, 0.75);
-    border: 2px solid #5a4f3c;
-    border-radius: 5px;
-    padding: 15px;
-}
-
-h1 {
+.row {
     text-align: center;
-    color: #ffffff;
-    font-size: 1.5em;
-    margin-top: 0;
-    text-shadow: 1px 1px 2px black;
 }
 
-.input-container {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+.matHeader {
+    border-top: white solid .5px;
+    background: url('https://runeapps.org/nis/alt1-currentskin/nisbutton.png') 0px -100%/24px 400% repeat content-box;
+    color: black;
+    font-family: 'trajan-pro-3';
 }
 
-#username {
-    flex-grow: 1;
-    padding: 8px;
-    border: 1px solid #3c3c3c;
-    border-radius: 3px;
-    background-color: #1c1c1c;
-    color: #ff981f;
+.mats>.row,
+.matHeader * {
+    border-bottom: white solid .5px;
+    border-right: white solid .5px;
 }
 
-#username::placeholder {
-    color: #a0a0a0;
+.matHeader,
+.mats>.row * {
+    border-left: white solid .5px;
 }
 
-#lookup-btn {
-    padding: 8px 15px;
-    border: 1px solid #5a4f3c;
-    border-radius: 3px;
-    background-color: #3e3529;
-    color: #ff981f;
-    cursor: pointer;
-    font-weight: bold;
-    font-family: inherit;
+.matHeader>div:nth-child(2) {
+    margin-left: 1px;
 }
 
-#lookup-btn:hover {
-    background-color: #4e4337;
-    border-color: #7a6f5c;
+.mats input[type='checkbox'] {
+    margin: 20%;
+    height: 25px;
+    width: 25px;
 }
 
-#results {
-    margin-top: 20px;
+.scroll {
+    overflow-y: scroll;
+    height: calc(100% - 70px);
 }
 
-.task-category {
-    margin-bottom: 20px;
+.mats {
+    height: 100%
 }
 
-.task-category h2 {
-    color: #ffffff;
-    border-bottom: 1px solid #5a4f3c;
-    padding-bottom: 5px;
-    font-size: 1.2em;
-}
-
-.task {
-    background-color: rgba(0, 0, 0, 0.4);
-    border: 1px solid #444;
-    padding: 10px;
-    border-radius: 4px;
-    margin-bottom: 8px;
-    display: flex;
-    flex-direction: column;
-}
-
-.task.completed {
-    background-color: rgba(26, 179, 26, 0.2);
-    border-color: #1ab31a;
-}
-
-.task.completed .task-name {
-    text-decoration: line-through;
-    color: #aaa;
-}
-
-.task-info {
-    flex-grow: 1;
-}
-
-.task-name {
-    font-weight: bold;
-}
-
-.task-description {
-    font-size: 0.9em;
-    color: #b0b0b0;
-    margin-top: 5px;
-}
-
-.task-requirements {
-    font-size: 0.8em;
-    color: #888;
-    margin-top: 5px;
-}
-
-.task-points {
-    font-weight: bold;
-    color: #4d94ff;
-    padding-left: 15px;
-    white-space: nowrap;
-}
-
-/* Tabs */
-.tab-container {
-    display: flex;
-    border-bottom: 1px solid #5a4f3c;
-    margin-bottom: 15px;
-}
-
-.tab-button {
-    background-color: transparent;
-    border: none;
-    color: #a0a0a0;
-    padding: 10px 15px;
-    cursor: pointer;
-    font-size: 1em;
-    font-family: inherit;
-    border-bottom: 2px solid transparent;
-}
-
-.tab-button.active {
-    color: #ff981f;
-    border-bottom: 2px solid #ff981f;
-}
-
-.tab-button:hover {
-    color: #ffffff;
-}
-
-.tab-content {
+.scroll::-webkit-scrollbar {
     display: none;
 }
 
-/* Controls */
-.controls-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    flex-wrap: wrap;
-    gap: 10px;
+body.nis:not(.artefact)::-webkit-scrollbar {
+    display: none;
 }
 
-.filter-container {
-    display: flex;
-    gap: 10px;
-    flex-grow: 1;
-    flex-wrap: wrap;
+body.nis:not(.artefact) {
+    overflow: scroll !important;
+    min-width: 315px;
+    height: calc(100vh - 10px);
 }
 
-#search-bar, .filter-container select {
-    padding: 8px;
-    border: 1px solid #3c3c3c;
-    border-radius: 3px;
-    background-color: #1c1c1c;
-    color: #ff981f;
+.complete {
+    background-color: lime;
+    color: black;
 }
 
-.toggle-container {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-/* Random Task Card */
-#random-task-btn {
-    padding: 10px 20px;
-    border: 1px solid #5a4f3c;
-    border-radius: 3px;
-    background-color: #3e3529;
-    color: #ff981f;
-    cursor: pointer;
+.container * {
     font-weight: bold;
-    font-family: inherit;
-    display: block;
-    margin: 20px auto;
+    font-size: 10pt;
 }
 
-#random-task-btn:hover {
-    background-color: #4e4337;
+.container {
+    margin-top: 10px
 }
 
-#random-task-btn:disabled {
-    background-color: #2a231c;
-    color: #a0a0a0;
-    cursor: not-allowed;
+.hide {
+    display: none;
 }
 
-
-#random-task-card-container .task {
-    margin-top: 15px;
+.getMat {
+    background-color: #00eeff !important;
+    transition: background-color 500ms;
 }
 
-.random-task-actions {
-    margin-top: 10px;
+.normal {
+    background-color: transparent;
+    transition: background-color 500ms;
 }
 
-.random-task-actions button {
-    margin-right: 10px;
-    padding: 5px 10px;
-    border: 1px solid #5a4f3c;
-    border-radius: 3px;
-    background-color: #3e3529;
-    color: #ff981f;
-    cursor: pointer;
+.goal,
+.goalCol {
+    display: none;
 }
 
-.random-task-actions button:hover {
-    background-color: #4e4337;
+.nisbutton {
+    font-size: 8pt !important;
 }
 
-
-/* Pin Icon */
-.pin-icon {
-    cursor: pointer;
-    font-size: 1.2em;
-    margin-left: 10px;
-    color: #a0a0a0;
+.artefact {
+    overflow: hidden !important;
+    min-width: 400px;
+    padding-right: .5em;
 }
 
-.pin-icon.pinned {
-    color: #ffc107; /* Gold color for pinned tasks */
+.artefactInput {
+    text-align: center;
 }
 
-.task-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    width: 100%;
+.artefactInput::-webkit-outer-spin-button,
+.artefactInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    /* margin: 0; */
 }
 
-.task-main-info {
-    flex-grow: 1;
-    padding-right: 10px;
+.artifactMenu {
+    /* margin-top: 4em */
 }
 
-.task-actions {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
+.main {
+    overflow-y: scroll;
+    max-height: 75vh;
+    margin: 5px 5px 0 5px;
 }
 
-.task-links-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 8px;
+.input-group-text {
+    min-width: 249px;
 }
 
-.task-link a {
-    color: #4d94ff;
-    text-decoration: none;
-    font-size: 0.9em;
+.modal-body,
+.modal-header,
+.modal-footer {
+    background-color: grey;
+    color: white;
 }
 
-.task-link a:hover {
-    text-decoration: underline;
+.warning {
+    background-color: yellow;
+    color: black;
+    font-weight: bold;
 }
 
-/* Fireworks */
-@keyframes firework-animation {
-    0% { transform: scale(0); opacity: 1; }
-    100% { transform: scale(1.5); opacity: 0; }
+.danger {
+    background-color: red;
+    color: black;
+    font-weight: bold;
 }
 
-.firework {
-    position: absolute;
-    width: 5px;
-    height: 5px;
-    background-color: #ffc107;
-    border-radius: 50%;
-    animation-name: firework-animation;
-    animation-timing-function: ease-out;
-    top: 50%;
-    left: 50%;
+input[type='search'],
+#collection {
+    width: 100%
+}
+
+.popover-header,
+.popover-title {
+    background: url("https://runeapps.org/nis/alt1-currentskin/background.png");
+    color: white;
+    font-family: 'trajan-pro-3';
 }
