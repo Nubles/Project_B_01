@@ -31,7 +31,7 @@ This is a web-based tool designed to help players track their progress in the Ca
 This application is fully self-contained and does not require you to run a local server.
 
 1.  **Download the App Files:**
-    *   Download all the application files (`index.html`, `style.css`, `script.js`, and `appconfig.json`) into a single folder on your computer.
+    *   Download all the application files (`index.html`, `style.css`, `script.js`, `appconfig.json`, and `tasks.json`) into a single folder on your computer.
 
 2.  **Get the File Path:**
     *   Navigate to the folder where you saved the files.
