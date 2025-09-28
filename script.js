@@ -11,13 +11,28 @@ const allTasks = {
     { "id": 467, "locality": "Anachronia", "task": "Obtain 100 potent herbs from Herby Werby.", "information": "Obtain 100 potent herbs from Herby Werby. (1 Herblore)", "requirements": "1 Herblore", "tier": "Easy", "points": 10 },
     { "id": 217, "locality": "Asgarnia: Burthorpe", "task": "Complete a lap of the Burthorpe Agility course.", "information": "Complete a lap of the Burthorpe Agility Course. (1 Agility)", "requirements": "1 Agility", "tier": "Easy", "points": 10 },
     { "id": 221, "locality": "Asgarnia: Falador", "task": "Kill a goblin raider boss in the Goblin Village.", "information": "Kill 15 goblins in the Goblin Village to spawn a goblin raider boss.", "requirements": "N/A", "tier": "Easy", "points": 10 },
-    { "id": 222, "locality": "Asgarnia: Falador", "task": "Complete the quest: Witch's House.", "information": "Complete Witch's House.", "requirements": "N/A", "tier": "Easy", "points": 10 }
-  ],
-  "Medium": [],
-  "Hard": [],
-  "Elite": [],
-  "Master": []
-}; // NOTE: This is a truncated version for brevity. The full JSON would be embedded here.
+    { "id": 222, "locality": "Asgarnia: Falador", "task": "Complete the quest: Witch's House.", "information": "Complete Witch's House.", "requirements": "N/A", "tier": "Easy", "points": 10 },
+    { "id": 223, "locality": "Asgarnia: Falador", "task": "Sit down with Tiffy in Falador park.", "information": "Sit on the bench with Sir Tiffy Cashien in Falador Park.", "requirements": "N/A", "tier": "Easy", "points": 10 },
+    { "id": 224, "locality": "Asgarnia: Falador", "task": "Pray to Bandos's remains.", "information": "Pray to Bandos's remains (just south-east of Goblin Village).", "requirements": "just south-east of Goblin Village", "tier": "Easy", "points": 10 },
+    { "id": 225, "locality": "Asgarnia: Falador", "task": "Dance in the Falador party room.", "information": "Dance in the Falador party room.", "requirements": "N/A", "tier": "Easy", "points": 10 },
+    { "id": 263, "locality": "Asgarnia: Port Sarim", "task": "Give Thurgo a redberry pie.", "information": "Give Thurgo a redberry pie. (10 Cooking, Partial completion of The Knight's Sword)", "requirements": "10 Cooking, Partial completion of The Knight's Sword", "tier": "Easy", "points": 10 },
+    { "id": 268, "locality": "Asgarnia: Taverley", "task": "Build a God statue in Taverley.", "information": "Build a God statue in Taverley.", "requirements": "N/A", "tier": "Easy", "points": 10 },
+    { "id": 271, "locality": "Desert: Menaphos", "task": "Enter Menaphos.", "information": "Enter Menaphos.", "requirements": "N/A", "tier": "Easy", "points": 10 },
+    { "id": 272, "locality": "Desert: General", "task": "Catch a whirligig at Het's Oasis.", "information": "Catch a whirligig at Het's Oasis. (1 Hunter)", "requirements": "1 Hunter", "tier": "Easy", "points": 10 },
+    { "id": 274, "locality": "Desert: General", "task": "Search the Grand Gold Chest in room 1 of Pyramid Plunder.", "information": "Search the grand gold chest in room 1 of Pyramid Plunder in Sophanem. (21 Thieving, Partial completion of Icthlarin's Little Helper)", "requirements": "21 Thieving, Partial completion of Icthlarin's Little Helper", "tier": "Easy", "points": 10 },
+    { "id": 275, "locality": "Desert: General", "task": "Search the Grand Gold Chest in room 2 of Pyramid Plunder.", "information": "Search the grand gold chest in room 2 of Pyramid Plunder in Sophanem. (31 Thieving, Partial completion of Icthlarin's Little Helper)", "requirements": "31 Thieving, Partial completion of Icthlarin's Little Helper", "tier": "Easy", "points": 10 },
+    { "id": 276, "locality": "Desert: General", "task": "Search the Grand Gold Chest in room 3 of Pyramid Plunder.", "information": "Search the grand gold chest in room 3 of Pyramid Plunder in Sophanem. (41 Thieving, Partial completion of Icthlarin's Little Helper)", "requirements": "41 Thieving, Partial completion of Icthlarin's Little Helper", "tier": "Easy", "points": 10 },
+    { "id": 277, "locality": "Desert: General", "task": "Mine a gem rock at the Al Kharid mine.", "information": "Mine a gem rock at the Al Kharid mine. A common gem rock can be mined with level 1 Mining.", "requirements": "N/A", "tier": "Easy", "points": 10 },
+    { "id": 279, "locality": "Desert: General", "task": "Kill a crocodile.", "information": "Kill a crocodile.", "requirements": "N/A", "tier": "Easy", "points": 10 },
+    { "id": 280, "locality": "Desert: General", "task": "Create a spirit kalphite pouch.", "information": "Create a spirit kalphite pouch at the obelisk south west of Pollnivneach. (25 Summoning, A pouch, 51 spirit shards, a blue charm, and a potato cactus)", "requirements": "25 Summoning, A pouch, 51 spirit shards, a blue charm, and a potato cactus", "tier": "Easy", "points": 10 },
+    { "id": 281, "locality": "Desert: Menaphos", "task": "Squish 10 corrupted scarabs.", "information": "Squish 10 corrupted scarabs.", "requirements": "N/A", "tier": "Easy", "points": 10 },
+    { "id": 282, "locality": "Desert: General", "task": "Sell a pyramid top to Simon.", "information": "Hand Simon Templeton a pyramid top. (30 Agility)", "requirements": "30 Agility", "tier": "Easy", "points": 10 },
+    { "id": 283, "locality": "Desert: General", "task": "Use any of the magic carpets in the desert.", "information": "Use any of the magic carpets in the desert. (1,000 coins)", "requirements": "1,000 coins", "tier": "Easy", "points": 10 },
+    { "id": 284, "locality": "Desert: General", "task": "Harvest a rose at Het's Oasis.", "information": "Harvest a rose at Het's Oasis. (30 Farming)", "requirements": "30 Farming", "tier": "Easy", "points": 10 },
+    { "id": 339, "locality": "Fremennik: Lunar Isles", "task": "Switch to the Lunar Spellbook at the astral altar.", "information": "Switch to the Lunar Spellbook at the astral altar. (Completion of Lunar Diplomacy)", "requirements": "Completion of Lunar Diplomacy", "tier": "Easy", "points": 10 },
+    { "id": 340, "locality": "Fremennik: Mainland", "task": "Defeat a Rock Crab in the Fremennik Province.", "information": "Defeat a Rock Crab in the Fremennik Province.", "requirements": "N/A", "tier": "Easy", "points": 10 }
+  ]
+};
 
 let playerData = null;
 let pinnedTasks = new Set(JSON.parse(localStorage.getItem('pinnedTasks') || '[]'));
@@ -310,7 +325,7 @@ function generateWikiLinks(task) {
         links.push({ name: linkName, url: `${baseUrl}${tier}_${area}_achievements` });
     }
 
-    const questRegex = /(?:Completion of|Complete the quest:|Partial completion of)\s+([a-zA-Z\s'-]+)(?:\(miniquest\))?/gi;
+    const questRegex = /(?:Completion of|Complete the quest:)\s+([a-zA-Z\s'-]+?)(?:\(miniquest\))?/gi;
     const combinedText = taskString + ' ' + reqString;
     let match;
     while ((match = questRegex.exec(combinedText)) !== null) {
