@@ -5,6 +5,7 @@ let playerData = null;
 let pinnedTasks = new Set(JSON.parse(localStorage.getItem('pinnedTasks') || '[]'));
 let tempCompletedTasks = new Set();
 const allSkills = new Set(["Agility", "Archaeology", "Attack", "Construction", "Cooking", "Crafting", "Defence", "Divination", "Dungeoneering", "Farming", "Firemaking", "Fishing", "Fletching", "Herblore", "Constitution", "Hunter", "Invention", "Magic", "Mining", "Necromancy", "Prayer", "Ranged", "Runecrafting", "Slayer", "Smithing", "Strength", "Summoning", "Thieving", "Woodcutting"]);
+const tierOrder = ['Easy', 'Medium', 'Hard', 'Elite', 'Master'];
 
 document.addEventListener('DOMContentLoaded', () => {
     fetch('tasks.json')
@@ -69,7 +70,6 @@ document.getElementById('lookup-btn').addEventListener('click', () => {
 });
 
 function populateFilters() {
-    const tiers = new Set(Object.keys(allTasks));
     const locations = new Set();
     const skills = new Set();
 
@@ -89,7 +89,11 @@ function populateFilters() {
     }
 
     const tierFilter = document.getElementById('tier-filter');
-    Array.from(tiers).sort().forEach(tier => tierFilter.appendChild(new Option(tier, tier)));
+    tierOrder.forEach(tier => {
+        if (allTasks[tier]) {
+            tierFilter.appendChild(new Option(tier, tier));
+        }
+    });
 
     const locationFilter = document.getElementById('location-filter');
     Array.from(locations).sort().forEach(loc => locationFilter.appendChild(new Option(loc, loc)));
@@ -122,7 +126,6 @@ function displayResults() {
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = '';
     let totalCompletedPoints = 0, totalPossiblePoints = 0;
-    const tierOrder = ['Easy', 'Medium', 'Hard', 'Elite', 'Master'];
     const hideCompleted = document.getElementById('hide-completed-toggle').checked;
     const searchTerm = document.getElementById('search-bar').value.toLowerCase();
     const selectedTier = document.getElementById('tier-filter').value;
