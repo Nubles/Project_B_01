@@ -2,6 +2,7 @@ console.log("script.js loaded");
 
 let allTasks = {};
 let playerData = null;
+let userSkills = {};
 let pinnedTasks = new Set(JSON.parse(localStorage.getItem('pinnedTasks') || '[]'));
 let tempCompletedTasks = new Set();
 const allSkills = new Set(["Agility", "Archaeology", "Attack", "Construction", "Cooking", "Crafting", "Defence", "Divination", "Dungeoneering", "Farming", "Firemaking", "Fishing", "Fletching", "Herblore", "Constitution", "Hunter", "Invention", "Magic", "Mining", "Necromancy", "Prayer", "Ranged", "Runecrafting", "Slayer", "Smithing", "Strength", "Summoning", "Thieving", "Woodcutting"]);
@@ -60,6 +61,19 @@ document.getElementById('lookup-btn').addEventListener('click', () => {
         .then(data => {
             if (data.error) throw new Error(data.error);
             playerData = data;
+
+            // Populate userSkills from API response
+            userSkills = {};
+            if (data.skills) {
+                const skillApiMap = { 'hitpoints': 'Constitution' };
+                for (const apiSkillName in data.skills) {
+                    const appSkillName = skillApiMap[apiSkillName] || (apiSkillName.charAt(0).toUpperCase() + apiSkillName.slice(1));
+                    if (allSkills.has(appSkillName)) {
+                        userSkills[appSkillName] = data.skills[apiSkillName].level;
+                    }
+                }
+            }
+
             document.getElementById('random-task-btn').disabled = false;
             displayResults();
             displayPinnedTasks();
@@ -119,6 +133,30 @@ function processTasks(completedTaskIds) {
     return processed;
 }
 
+function isTaskCompletable(task, userSkills) {
+    if (!task.requirements || task.requirements === 'N/A') {
+        return true; // No requirements, so it's completable.
+    }
+
+    // Iterate over every possible skill to check for its requirement.
+    for (const skillName of allSkills) {
+        // Create a specific regex for the current skill to find "## SkillName".
+        const skillRegex = new RegExp(`(\\d+)\\s+${skillName}\\b`, 'i');
+        const match = task.requirements.match(skillRegex);
+
+        if (match) {
+            const requiredLevel = parseInt(match[1], 10);
+            const userLevel = userSkills[skillName] || 0;
+
+            if (userLevel < requiredLevel) {
+                return false; // User does not meet this specific skill requirement.
+            }
+        }
+    }
+
+    return true; // User meets all found skill requirements.
+}
+
 function displayResults() {
     if (!playerData) return;
     const completedTaskIds = new Set(playerData.league_tasks);
@@ -127,6 +165,7 @@ function displayResults() {
     resultsDiv.innerHTML = '';
     let totalCompletedPoints = 0, totalPossiblePoints = 0;
     const hideCompleted = document.getElementById('hide-completed-toggle').checked;
+    const showCompletable = document.getElementById('show-completable-toggle').checked;
     const searchTerm = document.getElementById('search-bar').value.toLowerCase();
     const selectedTier = document.getElementById('tier-filter').value;
     const selectedLocation = document.getElementById('location-filter').value;
@@ -140,6 +179,7 @@ function displayResults() {
             const filteredTasks = allTierTasks.filter(task => {
                 const isCompleted = completedTaskIds.has(task.id) || tempCompletedTasks.has(task.id);
                 if (hideCompleted && isCompleted) return false;
+                if (showCompletable && !isTaskCompletable(task, userSkills)) return false;
                 if (searchTerm && !task.task.toLowerCase().includes(searchTerm)) return false;
                 if (selectedLocation && task.locality.split(':')[0] !== selectedLocation) return false;
                 if (selectedSkill && !(new RegExp(`\\b${selectedSkill}\\b`, 'i')).test(task.requirements)) return false;
@@ -199,7 +239,7 @@ function createTaskElement(task, completedTaskIds) {
     return taskDiv;
 }
 
-['hide-completed-toggle', 'search-bar', 'tier-filter', 'location-filter', 'skill-filter'].forEach(id => {
+['hide-completed-toggle', 'show-completable-toggle', 'search-bar', 'tier-filter', 'location-filter', 'skill-filter'].forEach(id => {
     document.getElementById(id).addEventListener(id === 'search-bar' ? 'input' : 'change', displayResults);
 });
 
@@ -316,9 +356,9 @@ function generateWikiLinks(task) {
     }
 
     // Quests
-    const questRegex = /(?:completion of|complete the quest:?|partial completion of) ([^.(]+)/gi;
+    const questRegex = /(?:completion of|complete the quest:?|partial completion of)\s+([\w\s,':-]+?)(?=\s*\.|\s*\(|\s+and\b|$)/gi;
     while ((match = questRegex.exec(combinedText)) !== null) {
-        const questName = match[1].trim();
+        const questName = match[1].trim().replace(/,$/, ''); // Clean up trailing commas
         if (questName && questName.length < 50 && !questName.toLowerCase().includes('achievements') && !questName.toLowerCase().includes('task set')) {
             links.push({ name: questName, url: `${baseUrl}${questName.replace(/\s+/g, '_')}` });
         }
